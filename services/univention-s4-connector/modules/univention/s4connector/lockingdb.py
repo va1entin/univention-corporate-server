@@ -34,7 +34,6 @@
 import univention.debug2 as ud
 import sqlite3
 import inspect
-import binascii
 
 
 def func_name():
