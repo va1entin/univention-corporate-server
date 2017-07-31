@@ -1566,7 +1566,7 @@ class object(univention.admin.handlers.simpleLdap, mungeddial.Support):
 						raise univention.admin.uexceptions.primaryGroup
 
 			if self['passwordexpiry']:
-				today = time.strftime('%Y-%m-%d').split('-')
+				today = time.strftime('%Y-%m-%d', time.gmtime()).split('-')
 				expiry = self['passwordexpiry'].split('-')
 				# expiry.reverse()
 				# today.reverse()
