@@ -36,6 +36,7 @@ import string
 import re
 import copy
 import time
+import calendar
 import types
 import struct
 from M2Crypto import X509
@@ -1138,8 +1139,20 @@ def case_insensitive_in_list(dn, list):
 	return False
 
 
+def posixSecondsToDate(seconds):
+	return time.strftime("%Y-%m-%d", time.gmtime(seconds))
+
+
 def posixDaysToDate(days):
-	return time.strftime("%Y-%m-%d", time.gmtime(long(days) * 3600 * 24))
+	return posixSecondsToDate(long(days) * 3600 * 24)
+
+
+def dateToPosixSeconds(iso_date):
+	return calendar.timegm(time.strptime(iso_date, "%Y-%m-%d"))
+
+
+def dateToPosixDays(iso_date):
+	return dateToPosixSeconds(iso_date) / 3600 / 24
 
 
 def sambaWorkstationsMap(workstations):
@@ -1474,7 +1487,7 @@ class object(univention.admin.handlers.simpleLdap, mungeddial.Support):
 		elif 'samba' in self.options:
 			if self.oldattr.has_key('sambaKickoffTime'):
 				univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'sambaKickoffTime is: %s' % self.oldattr['sambaKickoffTime'][0])
-				self.info['userexpiry'] = time.strftime("%Y-%m-%d", time.gmtime(long(self.oldattr['sambaKickoffTime'][0]) + (3600 * 24)))
+				self.info['userexpiry'] = posixSecondsToDate(self.oldattr['sambaKickoffTime'][0])
 
 		try:
 			givenName = self.oldattr.get('givenName', [''])[0]
@@ -2307,7 +2320,7 @@ class object(univention.admin.handlers.simpleLdap, mungeddial.Support):
 			if 'samba' in self.options:
 				sambaKickoffTime = ''
 				if self['userexpiry']:
-					sambaKickoffTime = "%d" % long(time.mktime(time.strptime(self['userexpiry'], "%Y-%m-%d")))
+					sambaKickoffTime = str(dateToPosixSeconds(self['userexpiry']))
 					univention.debug.debug(univention.debug.ADMIN, univention.debug.INFO, 'sambaKickoffTime: %s' % sambaKickoffTime)
 				old_sambaKickoffTime = self.oldattr.get('sambaKickoffTime', '')
 				if old_sambaKickoffTime != sambaKickoffTime:
@@ -2329,7 +2342,7 @@ class object(univention.admin.handlers.simpleLdap, mungeddial.Support):
 				if self.__is_posix_disabled() and self.hasChanged('disabled') and not self.hasChanged('userexpiry'):
 					shadowExpire = '1'
 				elif self['userexpiry']:
-					shadowExpire = "%d" % long(time.mktime(time.strptime(self['userexpiry'], "%Y-%m-%d")) / 3600 / 24 + 1)
+					shadowExpire = str(dateToPosixDays(self['userexpiry']))
 				elif self.__is_posix_disabled():
 					shadowExpire = '1'
 				else:
