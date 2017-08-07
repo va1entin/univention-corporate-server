@@ -39,6 +39,7 @@ import string
 import re
 import sys
 import time
+import calendar
 import types
 import array
 import univention.uldap
@@ -215,26 +216,28 @@ def encode_s4_resultlist(s4_resultlist):
 	return s4_resultlist
 
 
-def unix2s4_time(l):
-	d = 116444736000000000L  # difference between 1601 and 1970
-	return long(time.mktime(time.gmtime(time.mktime(time.strptime(l, "%Y-%m-%d")) + 90000))) * 10000000 + d  # 90000s are one day and one hour
+def samba2s4_time(unix_ts):
+	delta = 116444736000000000L  # difference between 1601 and 1970
+	as_nanoseconds = unix_ts * 10000000
+	return as_nanoseconds + delta
 
 
-def s42unix_time(l):
-	d = 116444736000000000L  # difference between 1601 and 1970
-	return time.strftime("%d.%m.%y", time.gmtime((l - d) / 10000000))
+def s42samba_time(s4_ts):
+	delta = 116444736000000000L  # difference between 1601 and 1970
+	if s4_ts == 0:
+		return 0
+	nanoseconds_since_epoch = s4_ts - delta
+	return nanoseconds_since_epoch / 10000000
 
 
-def samba2s4_time(l):
-	d = 116444736000000000L  # difference between 1601 and 1970
-	return long(time.mktime(time.localtime(l))) * 10000000 + d
+def unix2s4_time(iso_date):
+	since_epoch = calendar.timegm(time.strptime(iso_date, '%Y-%m-%d'))
+	return samba2s4_time(since_epoch)
 
 
-def s42samba_time(l):
-	if l == 0:
-		return l
-	d = 116444736000000000L  # difference between 1601 and 1970
-	return long(((l - d)) / 10000000)
+def s42unix_time(s4_ts):
+	since_epoch = s42samba_time(s4_ts)
+	return time.strftime('%Y-%m-%d', time.gmtime(since_epoch))
 
 # mapping funtions
 
