@@ -2164,7 +2164,8 @@ class s4(univention.s4connector.ucs):
 				# user enabled in UCS -> change
 				ucs_admin_object['disabled'] = 'all'
 				modified = 1
-		if 'accountExpires' in ldap_object_s4 and (long(ldap_object_s4['accountExpires'][0]) == long(9223372036854775807) or ldap_object_s4['accountExpires'][0] == '0'):
+		account_expires = long(ldap_object_s4['accountExpires'][0])
+		if 'accountExpires' in ldap_object_s4 and account_expires in (9223372036854775807, 0):
 			# s4 account not expired
 			if ucs_admin_object['userexpiry']:
 				# ucs account expired -> change
@@ -2172,11 +2173,11 @@ class s4(univention.s4connector.ucs):
 				modified = 1
 		else:
 			# s4 account expired
-			ud.debug(ud.LDAP, ud.INFO, "sync account_expire:      s4time: %s    unixtime: %s" % (long(ldap_object_s4['accountExpires'][0]), ucs_admin_object['userexpiry']))
+			ud.debug(ud.LDAP, ud.INFO, "sync account_expire:      s4time: %s    unixtime: %s" % (account_expires, ucs_admin_object['userexpiry']))
 
-			if s42unix_time(long(ldap_object_s4['accountExpires'][0])) != ucs_admin_object['userexpiry']:
+			if s42unix_time(account_expires) != ucs_admin_object['userexpiry']:
 				# ucs account not expired -> change
-				ucs_admin_object['userexpiry'] = s42unix_time(long(ldap_object_s4['accountExpires'][0]))
+				ucs_admin_object['userexpiry'] = s42unix_time(account_expires)
 				modified = 1
 
 		if modified:
