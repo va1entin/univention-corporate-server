@@ -9,7 +9,11 @@ for name in ('smbd', 'nmbd'):
 	for setting in settings.keys():
 		print "\t%s" % settings[setting]
 	print "\tpostrotate"
-	print "\t\t/usr/bin/killall -HUP /usr/sbin/%s" % name
+#smdb does not handle SYSHUP correct at the moment, so smb.conf has to be reloaded in a different way.
+        if name == 'smbd':
+                print "\t\t/usr/bin/smbcontrol all reload-config"
+        else:
+                print "\t\t/usr/bin/killall -HUP /usr/sbin/%s" % name
 	print "\tendscript"
 	print "}"
 @!@
