@@ -26,7 +26,7 @@
  * /usr/share/common-licenses/AGPL-3; if not, see
  * <http://www.gnu.org/licenses/>.
  */
-/*global define,require,console,setTimeout,window,document*/
+/*global dojo,dojox,define,require,console,setTimeout,window,document*/
 
 define([
 	"dojo/_base/lang",
@@ -64,6 +64,16 @@ define([
 		alert: function() {},
 		centerAlertDialog: function() {}
 	};
+	var storageProvider = null;
+	function initializeStorage() {
+		dojo.require("dojox.storage");
+		dojo.addOnLoad(function(){
+			dojox.storage.manager.initialize();
+			storageProvider = dojox.storage.manager.getProvider();
+			storageProvider.initialize();
+		});
+	}
+	initializeStorage();
 
 	tools.loadLicenseDataDeferred = new Deferred();
 
@@ -159,7 +169,7 @@ define([
 		getCookies: function() {
 			return {
 				sessionID: cookie('UMCSessionId-' + document.location.port) || cookie('UMCSessionId'),
-				username: cookie('UMCUsername-' + document.location.port) || cookie('UMCUsername')
+				username: storageProvider.get('UMCUsername-' + document.location.port) || storageProvider.get('UMCUsername')
 			};
 		},
 
@@ -168,9 +178,9 @@ define([
 			cookie(key, value, params);
 		},
 
-		setUsernameCookie: function(value, params) {
+		setUsernameCookie: function(value) {
 			var key = 'UMCUsername' + (document.location.port ? '-' + document.location.port : '');
-			cookie(key, value, params);
+			storageProvider.put(key, value);
 		},
 
 		closeSession: function() {
@@ -205,6 +215,13 @@ define([
 			// summary:
 			//		Reset timestamp of last received request
 			this.status('sessionLastRequest', new Date());
+			var username = cookie('UMCUsername-' + document.location.port) || cookie('UMCUsername');
+			if (username) {
+				// if we receive a UMCUsername cookie, we need to immediately remove it and store it in a html5 Storage for privacy reasons
+				var key = 'UMCUsername' + (document.location.port ? '-' + document.location.port : '');
+				cookie(key, '', { expires: -1, path: '/univention/' });
+				this.setUsernameCookie(username);
+			}
 		},
 
 		_checkSessionTimer: null,
