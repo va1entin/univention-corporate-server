@@ -172,6 +172,13 @@ define([
 					}
 				}
 			});
+
+			// add tooltip to overflown subname
+			query('.umcGallerySubName', this.contentNode).forEach(function(inode) {
+				if (inode.scrollWidth > inode.clientWidth) {
+					inode.title = inode.textContent;
+				}
+			});
 		},
 
 		_getItemFontSize: function(node, cssClass) {
