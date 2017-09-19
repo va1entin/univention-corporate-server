@@ -780,7 +780,7 @@ def password_sync_s4_to_ucs(s4connector, key, ucs_object, modifyUserPassword=Tru
 				newSambaPwdLastSet = str(pwdLastSet)
 			else:
 				newSambaPwdLastSet = str(univention.s4connector.s4.s42samba_time(pwdLastSet))
-				userobject = s4connector.get_ucs_object('user', ucs_object['dn'])
+				userobject = s4connector.get_ucs_object(key, ucs_object['dn'])
 				if not userobject:
 					ud.debug(ud.LDAP, ud.ERROR, "password_sync_s4_to_ucs: couldn't get user-object from UCS")
 					return False
