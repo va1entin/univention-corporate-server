@@ -150,8 +150,8 @@ Type=bool
 Categories=service-mail
 
 [mail/postfix/policy/listfilter/debug]
-Description[de]=Ist diese Variable auf den Wert "yes" gesetzt, werden beim Filtern von Mails an Gruppen und Mailinglisten log Informationen an die "mail" facility (/var/log/mail.*) gesendet.
-Description[en]=If this variable is set to "yes", log information is sent to the mail facility (/var/log/mail.*), when filtering messages to groups and mailing lists..
+Description[de]=Ist diese Variable auf den Wert "yes" gesetzt, werden beim Filtern von Mails an Gruppen und Mailinglisten Debug-Informationen in /var/log/mail.* gespeichert.
+Description[en]=If this variable is set to "yes", debug information is sent to the mail logfiles /var/log/mail.*, when messages to groups and mailing lists are filtered.
 Type=bool
 Categories=service-mail
 
