@@ -114,9 +114,7 @@ define([
 								'</div>' +
 								'<div class="umcGallerySubName">{itemSubName}</div>' +
 							'</div>' +
-							'<div class="appHover">' +
-								'<div>{itemHoverContent}</div>' +
-							'</div>' +
+							'<div class="appHover">{itemHoverContent}</div>' +
 						'</div>' +
 					'</div>' +
 					'<div class="appStatusIcon {itemStatusIcon}"></div>' +
@@ -163,6 +161,17 @@ define([
 					domStyle.set(inode, 'font-size', fontSize + 'px');
 				}
 			}));
+
+			// truncate hover text if it overflows and add tolltip
+			query('.appHover', this.contentNode).forEach(function(inode) {
+				if (inode.scrollHeight > inode.clientHeight) {
+					inode.title = inode.textContent;
+					var ellipsis = '...';
+					while (inode.textContent.length > ellipsis.length && inode.scrollHeight > inode.clientHeight) {
+						inode.textContent = lang.replace('{0}{1}', [inode.textContent.substring(0, inode.textContent.lastIndexOf(' ')), ellipsis]);
+					}
+				}
+			});
 		},
 
 		_getItemFontSize: function(node, cssClass) {
