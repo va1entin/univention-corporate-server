@@ -36,7 +36,7 @@ import sys
 
 def handler(bc, changes):
 	if bc.get('php/memory/limit') or bc.get('php/limit/filesize') or bc.get('php/limit/postsize') \
-		or bc.get('php/memory/executiontime') or bc.get('php/limit/inputtime') or bc.get('php/limit/sockettimeout'):
+		or bc.get('php/memory/executiontime') or bc.get('php/limit/inputtime') or bc.get('php/limit/sockettimeout') or bc.get('php/extensions'):
 		memlimit = bc.get('php/memory/limit')
 		if memlimit and memlimit[-1:].lower() == 'm':
 			memlimit = memlimit[:-1]
@@ -60,6 +60,8 @@ def handler(bc, changes):
 		sockettimeout = bc.get('php/limit/sockettimeout')
 		if sockettimeout and sockettimeout[-1:].lower() == 's':
 			sockettimeout = sockettimeout[:-1]
+
+		extensions = bc.get('php/extensions').split(',')
 
 		try:
 			f = open('/etc/php5/apache2/php.ini', 'r')
@@ -87,6 +89,11 @@ def handler(bc, changes):
 
 			if sockettimeout and line[:25] == 'default_socket_timeout = ':
 				line = 'default_socket_timeout = %s\n ' % str(sockettimeout)
+
+			if extensions and line[:22] == '; Dynamic Extensions ;':
+				for extension in extensions:
+					if extension.strip():
+						tmp.append('extension = %s\n' % (extension.strip(),))
 
 			tmp.append(line)
 			line = f.readline()

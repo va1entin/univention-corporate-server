@@ -70,6 +70,12 @@ Description[en]=The maximum time in seconds a PHP script waits for input on sock
 Type=int
 Categories=service-apache
 
+[php/extensions]
+Description[de]=Die aktivierten Erweiterungen für PHP-Skripte als komma separierte Liste (z.B. krb5.so,mysql.so).
+Description[en]=The activated extensions for PHP scripts as comma separated list (e.g. krb5.so,mysql.so).
+Type=str
+Categories=service-apache
+
 [apache2/autostart]
 Description[de]=Die Variable konfiguriert den Startmodus des Apache-Dienstes. Wird sie auf 'no' oder 'disabled' gesetzt, kann der Dienst nicht gestartet werden. Wird die auf 'manually' gesetzt, erfolgt kein automatischer Start zum Systemstart, der Dienst kann aber später gezielt gestartet werden.
 Description[en]=This variable configures the start mode of the Apache service. If set to 'no' or 'disabled', the service cannot be started. If the variable is set to 'manually', the service isn't started during system boot, but can be enabled manually at a later point.

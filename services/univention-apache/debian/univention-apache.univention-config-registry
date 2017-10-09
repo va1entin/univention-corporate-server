@@ -65,6 +65,7 @@ Variables: php/limit/postsize
 Variables: php/memory/executiontime
 Variables: php/limit/inputtime
 Variables: php/limit/sockettimeout
+Variables: php/extensions
 
 Type: file
 File: etc/default/apache2
