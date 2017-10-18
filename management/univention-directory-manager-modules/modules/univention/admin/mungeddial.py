@@ -50,6 +50,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxCfgTSLogon': univention.admin.property(
 		short_description=_('Allow Windows terminal server login'),
@@ -62,6 +63,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxCfgClientDrivers': univention.admin.property(
 		short_description=_('Connect client drives at login'),
@@ -74,6 +76,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxCfgClientPrinters': univention.admin.property(
 		short_description=_('Connect client printers at login'),
@@ -86,6 +89,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxCfgDefaultClientPrinters': univention.admin.property(
 		short_description=_('Make client default printer the default printer for Windows terminal services'),
@@ -98,6 +102,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxCfgFlags1': univention.admin.property(
 		short_description=_('CTX Flags1'),
@@ -110,6 +115,7 @@ properties = {
 		dontsearch=True,
 		may_change=False,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxCallback': univention.admin.property(
 		short_description=_('CTX Callback'),
@@ -122,6 +128,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxShadow': univention.admin.property(
 		short_description=_('CTX Mirroring'),
@@ -134,6 +141,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxBrokenSession': univention.admin.property(
 		short_description=_('Terminated or timed-out sessions'),
@@ -146,6 +154,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxReconnectSession': univention.admin.property(
 		short_description=_('Reconnect session'),
@@ -158,6 +167,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxMaxConnectionTime': univention.admin.property(
 		short_description=_('CTX maximum connection time'),
@@ -170,6 +180,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxMaxDisconnectionTime': univention.admin.property(
 		short_description=_('CTX maximum disconnection time'),
@@ -182,6 +193,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxMaxIdleTime': univention.admin.property(
 		short_description=_('CTX maximum idle time'),
@@ -194,6 +206,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxKeyboardLayout': univention.admin.property(
 		short_description=_('Keyboard layout'),
@@ -206,6 +219,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxMinEncryptionLevel': univention.admin.property(
 		short_description=_('CTX minimal encryption level'),
@@ -218,6 +232,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxWorkDirectory': univention.admin.property(
 		short_description=_('Working directory for startup command'),
@@ -230,6 +245,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxNWLogonServer': univention.admin.property(
 		short_description=_('CTX NW Logon Server'),
@@ -242,6 +258,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxWFHomeDir': univention.admin.property(
 		short_description=_('Home directory for Windows terminal services'),
@@ -254,6 +271,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxWFHomeDirDrive': univention.admin.property(
 		short_description=_('Home drive for Windows terminal services'),
@@ -266,6 +284,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxWFProfilePath': univention.admin.property(
 		short_description=_('Profile directory for Windows terminal services'),
@@ -278,6 +297,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxStartprogramClient': univention.admin.property(
 		short_description=_('Use client configuration for startup command'),
@@ -290,6 +310,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxInitialProgram': univention.admin.property(
 		short_description=_('Startup command'),
@@ -302,6 +323,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxCallbackNumber': univention.admin.property(
 		short_description=_('CTX Callback Number'),
@@ -314,6 +336,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 	'CtxRASDialin': univention.admin.property(
 		short_description=_('CTX RAS Dialin'),
@@ -326,6 +349,7 @@ properties = {
 		dontsearch=True,
 		may_change=True,
 		identifies=False,
+		readonly_when_synced=True,
 	),
 }
 
