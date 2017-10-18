@@ -30,6 +30,7 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+from __future__ import absolute_import
 import traceback
 import re
 
@@ -49,8 +50,12 @@ from PAM import (
 	PAM_ACCT_EXPIRED,
 	PAM_AUTH_ERR,
 )
+from ldap.filter import filter_format
 
 from univention.management.console.log import AUTH
+from univention.management.console.ldap import get_machine_connection, get_user_connection
+
+import univention.admin
 
 from univention.lib.i18n import Translation, I18N_Error
 _ = Translation('univention.management.console').translate
@@ -244,8 +249,35 @@ class PamAuth(object):
 			self.pam.chauthtok()
 		except PAMError as pam_err:
 			AUTH.warn('Changing password failed (%s). Prompts: %r' % (pam_err, prompts))
+			try:
+				self.change_password_ldap(username, old_password, new_password)
+			except Exception as exc:
+				AUTH.process('Changing the user password via LDAP failed: %s: %s' % (type(exc).__name__, exc))
+				pass  # ignore a lot of exceptions, password changing failed!
+			else:
+				return  # the password was sucessfully changed
 			message = self._parse_error_message_from(pam_err, prompts)
 			raise PasswordChangeFailed('%s %s' % (self._('Changing password failed.'), message))
+
+	users_module = None
+
+	def change_password_ldap(self, username, password, new_password):
+		"""Changes the users password via UDM if it is a ldap-only user"""
+		lo, po = get_machine_connection()
+		if self.users_module is None:
+			univention.admin.modules.update()
+			self.users_module = univention.admin.modules.get('users/user')
+			univention.admin.modules.init(lo, po, self.users_module)
+		users = self.users_module
+		user = users.lookup(None, lo, filter_format('username=%s', [username]), unique=True, required=True)[0]
+		if set(user.options) & {'posix', 'samba', 'kerberos'} or 'ldap_pwd' not in user.options:
+			raise PasswordChangeFailed('Not an LDAP user.')
+		lo, po = get_user_connection(bind=lambda lo: lo.bind(user.dn, password))
+		user = users.object(None, lo, po, user.dn)
+		user.open()
+		#user['overridePWHistory'] = '1'
+		user['password'] = new_password
+		user.modify()
 
 	def init(self):
 		pam = PAM()
