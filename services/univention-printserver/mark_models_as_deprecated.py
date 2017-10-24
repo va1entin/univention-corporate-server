@@ -38,6 +38,7 @@ import univention.admin.modules
 import univention.admin.config
 import univention.admin.uldap
 
+
 class UpdatePrinterModels(object):
 
 	def __init__(self, options, obsolete):
@@ -51,7 +52,6 @@ class UpdatePrinterModels(object):
 		univention.admin.modules.init(self.lo, self.position, self.models)
 
 	def ldap_connection(self):
-		self.co = univention.admin.config.config()
 		if self.options.binddn and self.options.bindpwd:
 			self.lo = univention.admin.uldap.access(
 				host=self.ucr['ldap/master'],
@@ -87,7 +87,6 @@ class UpdatePrinterModels(object):
 			ldap_models = attr.get('printerModel', [])
 			new_ldap_models = list()
 			ppds = dict()
-			change = False
 			for model in ldap_models:
 				ppd = model.split('"')[1]
 				if ppd in ppds:
@@ -96,7 +95,7 @@ class UpdatePrinterModels(object):
 					ppds[ppd] = [model]
 			for ppd in ppds:
 				if len(ppds[ppd]) > 1:
-					_tmp, new_description =self.get_description_from_ppd(ppd)
+					_tmp, new_description = self.get_description_from_ppd(ppd)
 					new_ldap_models.append('"%s" "%s"' % (ppd, new_description))
 				else:
 					new_ldap_models.append(ppds[ppd][0])
@@ -110,7 +109,7 @@ class UpdatePrinterModels(object):
 					self.lo.modify(dn, changes)
 
 	def mark_as_obsolete(self):
-		obj = self.models.lookup(self.co, self.lo, ldap.filter.filter_format('name=%s', [options.name]))
+		obj = self.models.lookup(None, self.lo, ldap.filter.filter_format('name=%s', [options.name]))
 		if obj:
 			obj = obj[0]
 			obj.open()
@@ -133,6 +132,7 @@ class UpdatePrinterModels(object):
 					obj.modify()
 				if options.verbose:
 					print 'info: %s modified' % obj.dn
+
 
 if __name__ == '__main__':
 	usage = '%prog [options] [MODEL, MODEL, ...]'
