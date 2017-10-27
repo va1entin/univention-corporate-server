@@ -46,7 +46,7 @@ module = 'mail/domain'
 operations = ['add', 'edit', 'remove', 'search', 'move']
 childs = 0
 short_description = _('Mail domain')
-long_description = ''
+long_description = _('Configure mail handling for a DNS domain')
 
 module_search_filter = univention.admin.filter.conjunction('&', [
 	univention.admin.filter.expression('objectClass', 'univentionMailDomainname'),
@@ -55,7 +55,7 @@ module_search_filter = univention.admin.filter.conjunction('&', [
 property_descriptions = {
 	'name': univention.admin.property(
 		short_description=_('Mail domain name'),
-		long_description='',
+		long_description=_('The name of the DNS domain, for which email should be handled'),
 		syntax=univention.admin.syntax.dnsName,
 		multivalue=False,
 		include_in_default_search=True,

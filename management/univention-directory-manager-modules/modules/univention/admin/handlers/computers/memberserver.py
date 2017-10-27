@@ -54,20 +54,23 @@ operations = ['add', 'edit', 'remove', 'search', 'move']
 docleanup = 1
 childs = 0
 short_description = _('Computer: Member Server')
-long_description = ''
+long_description = _('Computer machine account for a UCS member server')
 options = {
 	'posix': univention.admin.option(
 		short_description=_('Posix account'),
+		long_description=_('Make this account an POSIX account, which is required i.a. for Linux'),
 		default=1,
 		objectClasses=('posixAccount', 'shadowAccount'),
 	),
 	'kerberos': univention.admin.option(
 		short_description=_('Kerberos principal'),
+		long_description=_('Make this account a Kerberos account, which is required i.a. for Single-Sign-On with Linux and Windows'),
 		default=1,
 		objectClasses=('krb5Principal', 'krb5KDCEntry'),
 	),
 	'samba': univention.admin.option(
 		short_description=_('Samba account'),
+		long_description=_('Make this account a Windows account'),
 		editable=True,
 		default=1,
 		objectClasses=('sambaSamAccount',),
@@ -116,7 +119,7 @@ property_descriptions = {
 	),
 	'domain': univention.admin.property(
 		short_description=_('Domain'),
-		long_description=_('The name of the domain of this host'),
+		long_description=_('The DNS domain of this host'),
 		syntax=univention.admin.syntax.string,
 		multivalue=False,
 		include_in_default_search=True,
@@ -137,7 +140,7 @@ property_descriptions = {
 	),
 	'network': univention.admin.property(
 		short_description=_('Network'),
-		long_description=_(''),
+		long_description=_('Reference to a network zone containing initial DNS and DHCP settings'),
 		syntax=univention.admin.syntax.network,
 		multivalue=False,
 		options=[],
@@ -158,7 +161,7 @@ property_descriptions = {
 	),
 	'serverRole': univention.admin.property(
 		short_description=_('System role'),
-		long_description='',
+		long_description=_('The function of this host within the domain, e.g. "master", "member"'),
 		syntax=univention.admin.syntax.string,
 		multivalue=True,
 		include_in_default_search=True,
@@ -201,7 +204,7 @@ property_descriptions = {
 	),
 	'dnsEntryZoneAlias': univention.admin.property(
 		short_description=_('Zone for DNS alias'),
-		long_description=_('The name of the DNS zone containing DNS alias entries of this host'),
+		long_description=_('Reference to the DNS zone containing DNS alias entries of this host'),
 		syntax=univention.admin.syntax.dnsEntryAlias,
 		multivalue=True,
 		options=[],
@@ -233,7 +236,7 @@ property_descriptions = {
 	),
 	'password': univention.admin.property(
 		short_description=_('Password'),
-		long_description=_('Machine secret of this host. Be cautious, do not change this manually.'),
+		long_description=_('Machine secret of this host. Must be synchronized with the password stored on the host itself, e.g. "/etc/machine.secret".'),
 		syntax=univention.admin.syntax.passwd,
 		multivalue=False,
 		options=['kerberos', 'posix', 'samba'],
@@ -266,7 +269,7 @@ property_descriptions = {
 	),
 	'primaryGroup': univention.admin.property(
 		short_description=_('Primary group'),
-		long_description='',
+		long_description=_('The name of the default group of this account'),
 		syntax=univention.admin.syntax.GroupDN,
 		multivalue=False,
 		options=['posix'],
@@ -277,7 +280,7 @@ property_descriptions = {
 	),
 	'reinstall': univention.admin.property(
 		short_description=_('(Re-)install on next boot'),
-		long_description='',
+		long_description=_('The DHCP server will be configured to serve the UCS installer over the network to the host when next the host boots from the network'),
 		syntax=univention.admin.syntax.boolean,
 		multivalue=False,
 		options=[],
@@ -287,7 +290,7 @@ property_descriptions = {
 	),
 	'reinstalloption': univention.admin.property(
 		short_description=_('additional start options'),
-		long_description='',
+		long_description=_('Additional parameters for network booting, e.g. Linux kernel command line parameters or UCS installer options'),
 		syntax=univention.admin.syntax.string,
 		multivalue=False,
 		options=[],
@@ -297,7 +300,7 @@ property_descriptions = {
 	),
 	'instprofile': univention.admin.property(
 		short_description=_('Name of installation profile'),
-		long_description='',
+		long_description=_('An absolute URL or path relative to "preseed/" directory on the installation server to the "preseed" file for the UCS installer'),
 		syntax=univention.admin.syntax.string,
 		multivalue=False,
 		options=[],
@@ -307,7 +310,7 @@ property_descriptions = {
 	),
 	'inventoryNumber': univention.admin.property(
 		short_description=_('Inventory number'),
-		long_description='',
+		long_description=_('An unique identifier to identify this host as an asset of your company'),
 		syntax=univention.admin.syntax.string,
 		multivalue=True,
 		include_in_default_search=True,
@@ -318,7 +321,7 @@ property_descriptions = {
 	),
 	'groups': univention.admin.property(
 		short_description=_('Groups'),
-		long_description='',
+		long_description=_('References to additional groups of this account'),
 		syntax=univention.admin.syntax.GroupDN,
 		multivalue=True,
 		options=[],
@@ -329,7 +332,7 @@ property_descriptions = {
 	),
 	'sambaRID': univention.admin.property(
 		short_description=_('Relative ID'),
-		long_description='',
+		long_description=_('Individual part of the security identifier to uniquely identify this computer account within your domain'),
 		syntax=univention.admin.syntax.integer,
 		multivalue=False,
 		required=False,

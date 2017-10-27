@@ -107,7 +107,7 @@ property_descriptions = {
 	),
 	'inventoryNumber': univention.admin.property(
 		short_description=_('Inventory number'),
-		long_description=_('An unique identifier to identify this host as your property'),
+		long_description=_('An unique identifier to identify this host as an asset of your company'),
 		syntax=univention.admin.syntax.string,
 		multivalue=True,
 		include_in_default_search=True,

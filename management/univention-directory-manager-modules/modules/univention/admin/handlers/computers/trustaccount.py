@@ -48,13 +48,13 @@ operations = ['add', 'edit', 'remove', 'search', 'move']
 docleanup = 1
 childs = 0
 short_description = _('Computer: Domain trust account')
-long_description = ''
+long_description = _('Computer machine account for some computer')
 options = {
 }
 property_descriptions = {
 	'name': univention.admin.property(
 		short_description=_('Name'),
-		long_description='',
+		long_description=_('hostname'),
 		syntax=univention.admin.syntax.dnsName_umlauts,
 		multivalue=False,
 		include_in_default_search=True,
@@ -65,7 +65,7 @@ property_descriptions = {
 	),
 	'description': univention.admin.property(
 		short_description=_('Description'),
-		long_description='',
+		long_description=_('Some descriptive text for this host'),
 		syntax=univention.admin.syntax.string,
 		multivalue=False,
 		include_in_default_search=True,
@@ -75,7 +75,7 @@ property_descriptions = {
 	),
 	'password': univention.admin.property(
 		short_description=_('Machine Password'),
-		long_description='',
+		long_description=_('Machine secret of this host. Must be synchronized with the password stored on the host itself, e.g. "/etc/machine.secret".'),
 		syntax=univention.admin.syntax.passwd,
 		multivalue=False,
 		options=[],
