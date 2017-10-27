@@ -46,7 +46,7 @@ for computer in univention.admin.handlers.computers.computers:
 
 childs = 0
 short_description = _('Computer')
-long_description = ''
+long_description = _('LDAP entry for computer machine account')
 operations = ['search']
 virtual = 1
 options = {
@@ -54,7 +54,7 @@ options = {
 property_descriptions = {
 	'name': univention.admin.property(
 		short_description=_('Name'),
-		long_description='',
+		long_description=_('hostname'),
 		syntax=univention.admin.syntax.hostName,
 		multivalue=False,
 		include_in_default_search=True,
@@ -65,7 +65,7 @@ property_descriptions = {
 	),
 	'dnsAlias': univention.admin.property(
 		short_description=_('DNS alias'),
-		long_description='',
+		long_description=_('Additional names of this host in DNS'),
 		syntax=univention.admin.syntax.string,
 		multivalue=True,
 		options=[],
@@ -75,7 +75,7 @@ property_descriptions = {
 	),
 	'description': univention.admin.property(
 		short_description=_('Description'),
-		long_description='',
+		long_description=_('Some descriptive text for this host'),
 		syntax=univention.admin.syntax.string,
 		multivalue=False,
 		include_in_default_search=True,
@@ -85,7 +85,7 @@ property_descriptions = {
 	),
 	'mac': univention.admin.property(
 		short_description=_('MAC address'),
-		long_description='',
+		long_description=_('One or more (Ethernet) Media-Access-Control addresses of network interfaces'),
 		syntax=univention.admin.syntax.string,
 		multivalue=True,
 		include_in_default_search=True,
@@ -96,7 +96,7 @@ property_descriptions = {
 	),
 	'ip': univention.admin.property(
 		short_description=_('IP address'),
-		long_description='',
+		long_description=_('One ore mor IPv4 or IPv6 addresses of this host'),
 		syntax=univention.admin.syntax.ipAddress,
 		multivalue=True,
 		include_in_default_search=True,
@@ -107,7 +107,7 @@ property_descriptions = {
 	),
 	'inventoryNumber': univention.admin.property(
 		short_description=_('Inventory number'),
-		long_description='',
+		long_description=_('An unique identifier to identify this host as your property'),
 		syntax=univention.admin.syntax.string,
 		multivalue=True,
 		include_in_default_search=True,
@@ -117,8 +117,8 @@ property_descriptions = {
 		identifies=False
 	),
 	'fqdn': univention.admin.property(
-		short_description='FQDN',
-		long_description='',
+		short_description=_('FQHN'),
+		long_description=_('Fully qualified host name, e.g. hostname and domainname'),
 		syntax=univention.admin.syntax.string,
 		multivalue=False,
 		include_in_default_search=True,

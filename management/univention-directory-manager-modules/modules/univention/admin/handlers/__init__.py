@@ -1403,8 +1403,8 @@ class simpleComputer(simpleLdap):
 		self.ipRequest = 0
 		# read-only attribute containing the FQDN of the host
 		self.descriptions['fqdn'] = univention.admin.property(
-			short_description='FQDN',
-			long_description='',
+			short_description=_('FQHN'),
+			long_description=_('Fully qualified host name, e.g. hostname and domainname'),
 			syntax=univention.admin.syntax.string,
 			multivalue=False,
 			options=[],
