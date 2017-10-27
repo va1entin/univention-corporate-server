@@ -150,7 +150,7 @@ property_descriptions = {
 	),
 	'ip': univention.admin.property(
 		short_description=_('IP address'),
-		long_description=_('One ore mor IPv4 or IPv6 addresses of this host'),
+		long_description=_('One or more IPv4 or IPv6 addresses of this host'),
 		syntax=univention.admin.syntax.ipAddress,
 		multivalue=True,
 		include_in_default_search=True,
@@ -193,7 +193,7 @@ property_descriptions = {
 	),
 	'dnsEntryZoneReverse': univention.admin.property(
 		short_description=_('Reverse zone for DNS entry'),
-		long_description=_('Reference to the DNS zone containing revers DNS entries of this host, e.g. IP address to hostname'),
+		long_description=_('Reference to the DNS zone containing reverse DNS entries of this host, e.g. IP address to hostname'),
 		syntax=univention.admin.syntax.dnsEntryReverse,
 		multivalue=True,
 		options=[],
@@ -236,7 +236,7 @@ property_descriptions = {
 	),
 	'password': univention.admin.property(
 		short_description=_('Password'),
-		long_description=_('Machine secret of this host'),
+		long_description=_('Machine secret of this host. Be cautious, do not change this manually.'),
 		syntax=univention.admin.syntax.passwd,
 		multivalue=False,
 		options=['kerberos', 'posix', 'samba'],

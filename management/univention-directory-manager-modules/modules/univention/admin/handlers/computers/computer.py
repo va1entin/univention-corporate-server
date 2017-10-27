@@ -96,7 +96,7 @@ property_descriptions = {
 	),
 	'ip': univention.admin.property(
 		short_description=_('IP address'),
-		long_description=_('One ore mor IPv4 or IPv6 addresses of this host'),
+		long_description=_('One or more IPv4 or IPv6 addresses of this host'),
 		syntax=univention.admin.syntax.ipAddress,
 		multivalue=True,
 		include_in_default_search=True,
