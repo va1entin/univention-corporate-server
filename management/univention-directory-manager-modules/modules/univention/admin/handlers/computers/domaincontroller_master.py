@@ -76,7 +76,7 @@ options = {
 property_descriptions = {
 	'name': univention.admin.property(
 		short_description=_('Domain controller name'),
-		long_description='',
+		long_description=_('hostname'),
 		syntax=univention.admin.syntax.hostName,
 		multivalue=False,
 		include_in_default_search=True,
@@ -87,7 +87,7 @@ property_descriptions = {
 	),
 	'description': univention.admin.property(
 		short_description=_('Description'),
-		long_description='',
+		long_description=_('Some descriptive text for this host'),
 		syntax=univention.admin.syntax.string,
 		multivalue=False,
 		include_in_default_search=True,
@@ -97,7 +97,7 @@ property_descriptions = {
 	),
 	'operatingSystem': univention.admin.property(
 		short_description=_('Operating system'),
-		long_description='',
+		long_description=_('Name of the operating system'),
 		syntax=univention.admin.syntax.string,
 		multivalue=False,
 		include_in_default_search=True,
@@ -107,7 +107,7 @@ property_descriptions = {
 	),
 	'operatingSystemVersion': univention.admin.property(
 		short_description=_('Operating system version'),
-		long_description='',
+		long_description=_('Version number of the operating system'),
 		syntax=univention.admin.syntax.string,
 		multivalue=False,
 		required=False,
@@ -116,7 +116,7 @@ property_descriptions = {
 	),
 	'domain': univention.admin.property(
 		short_description=_('Domain'),
-		long_description='',
+		long_description=_('The name of the domain of this host'),
 		syntax=univention.admin.syntax.string,
 		multivalue=False,
 		include_in_default_search=True,
@@ -126,7 +126,7 @@ property_descriptions = {
 	),
 	'mac': univention.admin.property(
 		short_description=_('MAC address'),
-		long_description='',
+		long_description=_('One or more (Ethernet) Media-Access-Control addresses of network interfaces'),
 		syntax=univention.admin.syntax.MAC_Address,
 		multivalue=True,
 		include_in_default_search=True,
@@ -137,7 +137,7 @@ property_descriptions = {
 	),
 	'network': univention.admin.property(
 		short_description=_('Network'),
-		long_description='',
+		long_description=_(''),
 		syntax=univention.admin.syntax.network,
 		multivalue=False,
 		options=[],
@@ -147,7 +147,7 @@ property_descriptions = {
 	),
 	'ip': univention.admin.property(
 		short_description=_('IP address'),
-		long_description='',
+		long_description=_('One or more IPv4 or IPv6 addresses of this host'),
 		syntax=univention.admin.syntax.ipAddress,
 		multivalue=True,
 		include_in_default_search=True,
@@ -169,7 +169,7 @@ property_descriptions = {
 	),
 	'service': univention.admin.property(
 		short_description=_('Service'),
-		long_description='',
+		long_description=_('The services registered at this host'),
 		syntax=univention.admin.syntax.Service,
 		multivalue=True,
 		options=[],
@@ -179,7 +179,7 @@ property_descriptions = {
 	),
 	'dnsEntryZoneForward': univention.admin.property(
 		short_description=_('Forward zone for DNS entry'),
-		long_description='',
+		long_description=_('Reference to the DNS zone containing forward DNS entries of this host, e.g. hostname to IP addresses'),
 		syntax=univention.admin.syntax.dnsEntry,
 		multivalue=True,
 		options=[],
@@ -190,7 +190,7 @@ property_descriptions = {
 	),
 	'dnsEntryZoneReverse': univention.admin.property(
 		short_description=_('Reverse zone for DNS entry'),
-		long_description='',
+		long_description=_('Reference to the DNS zone containing reverse DNS entries of this host, e.g. IP address to hostname'),
 		syntax=univention.admin.syntax.dnsEntryReverse,
 		multivalue=True,
 		options=[],
@@ -201,7 +201,7 @@ property_descriptions = {
 	),
 	'dnsEntryZoneAlias': univention.admin.property(
 		short_description=_('Zone for DNS alias'),
-		long_description='',
+		long_description=_('The name of the DNS zone containing DNS alias entries of this host'),
 		syntax=univention.admin.syntax.dnsEntryAlias,
 		multivalue=True,
 		options=[],
@@ -212,7 +212,7 @@ property_descriptions = {
 	),
 	'dnsAlias': univention.admin.property(
 		short_description=_('DNS alias'),
-		long_description='',
+		long_description=_('Additional names of this host in DNS'),
 		syntax=univention.admin.syntax.string,
 		multivalue=True,
 		options=[],
@@ -222,7 +222,7 @@ property_descriptions = {
 	),
 	'dhcpEntryZone': univention.admin.property(
 		short_description=_('DHCP service'),
-		long_description='',
+		long_description=_('Reference to the DHCP service for this host'),
 		syntax=univention.admin.syntax.dhcpEntry,
 		multivalue=True,
 		options=[],
@@ -233,7 +233,7 @@ property_descriptions = {
 	),
 	'password': univention.admin.property(
 		short_description=_('Password'),
-		long_description='',
+		long_description=_('Machine secret of this host. Be cautious, do not change this manually.'),
 		syntax=univention.admin.syntax.passwd,
 		multivalue=False,
 		options=['kerberos', 'posix', 'samba'],
@@ -244,7 +244,7 @@ property_descriptions = {
 	),
 	'unixhome': univention.admin.property(
 		short_description=_('Unix home directory'),
-		long_description='',
+		long_description=_('Absolute path to the home directory of this account'),
 		syntax=univention.admin.syntax.absolutePath,
 		multivalue=False,
 		options=['posix'],
@@ -255,7 +255,7 @@ property_descriptions = {
 	),
 	'shell': univention.admin.property(
 		short_description=_('Login shell'),
-		long_description='',
+		long_description=_('Absolute path to the login shell of this account'),
 		syntax=univention.admin.syntax.string,
 		multivalue=False,
 		options=['posix'],
