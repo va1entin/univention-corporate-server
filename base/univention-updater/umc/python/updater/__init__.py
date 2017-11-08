@@ -40,6 +40,7 @@ import psutil
 import pipes
 import yaml
 import requests
+import traceback
 
 import univention.hooks
 import notifier.threads
@@ -53,7 +54,7 @@ from univention.management.console.modules.decorators import simple_response, sa
 from univention.management.console.modules.sanitizers import ChoicesSanitizer, StringSanitizer, IntegerSanitizer
 
 from univention.updater.tools import UniventionUpdater
-from univention.updater.errors import RequiredComponentError
+from univention.updater.errors import RequiredComponentError, ConfigurationError
 
 _ = Translation('univention-management-console-module-updater').translate
 
@@ -203,10 +204,18 @@ class Instance(Base):
 		self._logfile_start_line = 0
 		self._serial_file = Watched_File(COMPONENTS_SERIAL_FILE)
 		self._updates_serial = Watched_Files(UPDATE_SERIAL_FILES)
+		self._uu = None
 		try:
-			self.uu = UniventionUpdater(False)
-		except Exception as exc:  # FIXME: let it raise
+			# self.uu is a @property to make sure if it fails now, it may not fail later on and a retry is done
+			self.uu
+		except ConfigurationError as exc:
 			MODULE.error("init() ERROR: %s" % (exc,))
+
+	@property
+	def uu(self):
+		if not self._uu:
+			self._uu = UniventionUpdater(False)
+		return self._uu
 
 	@simple_response
 	def query_maintenance_information(self):
@@ -360,15 +369,10 @@ class Instance(Base):
 		ucr.load()
 		try:
 			# be as current as possible.
-			what = 'reinitializing UniventionUpdater'
 			self.uu.ucr_reinit()
-
-			what = 'checking update availability'
 			return self.uu.component_update_available()
-		except Exception as ex:
-			typ = str(type(ex)).strip('<>')
-			msg = '[while %s] [%s] %s' % (what, typ, str(ex))
-			MODULE.error(msg)
+		except ConfigurationError:
+			MODULE.error(traceback.format_exc())
 		return False
 
 	def status(self, request):  # TODO: remove unneeded things
@@ -389,14 +393,11 @@ class Instance(Base):
 
 		try:
 			# be as current as possible.
-			what = 'reinitializing UniventionUpdater'
 			self.uu.ucr_reinit()
 
-			what = 'getting UCS version'
 			result['ucs_version'] = self.uu.get_ucs_version()
 
 			# if nothing is returned -> convert to empty string.
-			what = 'querying available release updates'
 			try:
 				result['release_update_available'] = self.uu.release_update_available(errorsto='exception')
 			except RequiredComponentError as exc:
@@ -404,11 +405,8 @@ class Instance(Base):
 			if result['release_update_available'] is None:
 				result['release_update_available'] = ''
 
-			what = 'querying update-blocking components'
 			blocking_components = self.uu.get_all_available_release_updates()[1]
 			result['release_update_blocking_components'] = ' '.join(blocking_components or [])
-
-			what = "querying availability for easy mode"
 
 			if result['easy_mode']:
 				# updates/available should reflect the need for an update
@@ -425,7 +423,6 @@ class Instance(Base):
 				result['easy_update_available'] = False
 
 			# Component counts are now part of the general 'status' data.
-			what = "counting components"
 			c_count = 0
 			e_count = 0
 			for comp in self.uu.get_all_components():
@@ -442,12 +439,10 @@ class Instance(Base):
 			#       combobox and the 'package updates available' field.
 			result['serial'] = self._serial_file.timestamp()
 
-		except Exception as exc:  # FIXME: don't catch everything
-			typ = str(type(exc)).strip('<>')
-			msg = '[while %s] [%s] %s' % (what, typ, exc)
-			result['message'] = msg
+		except ConfigurationError as exc:
+			result['message'] = str(exc)
 			result['status'] = 1
-			MODULE.error(msg)
+			MODULE.error(traceback.format_exc())
 
 		self.finished(request.id, [result])
 
