@@ -268,8 +268,8 @@ def object_input(module, object, input, append=None, remove=None):
 					else:
 						val = []
 						for j in test_val:
-							if j and j.rstrip().lstrip():
-								val.append(j.rstrip().lstrip())
+						#	if j and j.rstrip().lstrip():
+							val.append(j.rstrip().lstrip())
 
 					if not object.has_key(key):
 						object[key] = []
