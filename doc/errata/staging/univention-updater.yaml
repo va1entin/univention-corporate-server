@@ -1,0 +1,10 @@
+product: ucs
+release: "4.2"
+version: [3]
+scope: ucs_4.2-0-errata4.2-3
+src: univention-updater
+fix: 
+desc: |
+ This update addresses the following issue(s):
+ * The univention-updater UMC module does not log an error anymore when failing to receive maintenance status information.
+bug: [44080]
