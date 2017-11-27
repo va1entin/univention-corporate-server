@@ -113,6 +113,7 @@ class Instance(Base):
 				records = univention.admin.modules.lookup(hmodule, None, lo, scope='sub', superordinate=forwardobject, filter=filter_format('(&(relativeDomainName=%s)(aRecord=%s))', (sso_name, current_ip[0])))
 				for record in records:
 					record.open()
-					record['a'].remove(oldip)
+					if oldip in record['a']:
+						record['a'].remove(oldip)
 					record['a'].append(ip)
 					record.modify()
