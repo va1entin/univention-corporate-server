@@ -31,15 +31,16 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
-import traceback
-import string
 import univention.config_registry
-import univention.admin.config
 import univention.admin.modules
 import univention.admin.uldap
 
+from ldap.filter import filter_format
+
 from univention.management.console.base import Base
 from univention.management.console.log import MODULE
+from univention.management.console.config import ucr
+from univention.management.console.decorators import simple_response
 
 univention.admin.modules.update()
 
@@ -49,92 +50,62 @@ univention.admin.syntax.update_choices()
 
 class Instance(Base):
 
-	def change(self, request):
+	@simple_response
+	def change(self, role, ip, netmask, oldip=None):
 		'''Return a dict with all necessary values for ipchange read from the current
 		status of the system.'''
 
-		result = {'success': True}
-		message = None
-		MODULE.info('IP Change')
+		lo, position = univention.admin.uldap.getAdminConnection()
+		cmodule = univention.admin.modules.get('computers/%s' % (role,))
 
-		if self._username.endswith('$'):
+		# do we have a forward zone for this IP address?
+		if oldip and oldip != ip:
+			fmodule = univention.admin.modules.get('dns/forward_zone')
+			for forwardobject in univention.admin.modules.lookup(fmodule, None, lo, scope='sub', superordinate=None, filter=filter_format('(aRecord=%s)', (oldip,))):
+				forwardobject.open()
+				forwardobject['a'].remove(oldip)
+				forwardobject['a'].append(ip)
+				forwardobject.modify()
 
-			ucr = univention.config_registry.ConfigRegistry()
-			ucr.load()
+		# remove old DNS reverse entries with old IP
+		server = cmodule.object(None, lo, position, self.user_dn)
+		server.open()
+		current_ip = server['ip']
+		for e in server['dnsEntryZoneReverse']:
+			if e[1] == current_ip:
+				server['dnsEntryZoneReverse'].remove(e)
 
-			server_name = '%s' % self._username[:-1]
-			MODULE.info('Server Name: %s' % server_name)
+		# change IP
+		server['ip'] = ip
+		MODULE.info('Change IP to %s' % (ip,))
+		server.modify()
 
-			lo, position = univention.admin.uldap.getAdminConnection()
-			co = univention.admin.config.config()
-			cmodule = univention.admin.modules.get('computers/%s' % request.options.get('role'))
+		# do we have a new reverse zone for this IP address?
+		rmodule = univention.admin.modules.get('dns/reverse_zone')
+		# ignore all netmask values != 255
+		c = netmask.split('.').count('255')
+		filter = filter_format('(subnet=%s)', ('.'.join(ip.split('.')[0:c]),))
+		reverseobject = univention.admin.modules.lookup(rmodule, None, lo, scope='sub', superordinate=None, filter=filter)
+		if reverseobject:
+			server.open()
+			server['dnsEntryZoneReverse'].append([reverseobject[0].dn, ip])
+			server.modify()
 
-			filter = '(cn=%s)' % server_name
-			cobject = univention.admin.modules.lookup(cmodule, co, lo, scope='sub', superordinate=None, filter=filter)
-
-			if cobject:
-				server = cobject[0]
-
-				# do we have a forward zone for this IP address?
-				if request.options.get('oldip') and request.options.get('oldip') != request.options.get('ip'):
-					fmodule = univention.admin.modules.get('dns/forward_zone')
-					filter = '(aRecord=%s)' % (request.options.get('oldip'))
-					forwardobjects = univention.admin.modules.lookup(fmodule, co, lo, scope='sub', superordinate=None, filter=filter)
-					for forwardobject in forwardobjects:
-						forwardobject.open()
-						forwardobject['a'].remove(request.options.get('oldip'))
-						forwardobject['a'].append(request.options.get('ip'))
-						forwardobject.modify()
-
-				# remove old DNS reverse entries with old IP
-				server.open()
-				old_ip = server['ip']
-				for e in server['dnsEntryZoneReverse']:
-					if e[1] == old_ip:
-						server['dnsEntryZoneReverse'].remove(e)
-
-				# change IP
-				server['ip'] = request.options.get('ip')
-				MODULE.info('Change IP to %s' % request.options.get('ip'))
-				try:
-					server.modify()
-				except Exception:
-					MODULE.warn('Failed to change IP: %s' % traceback.format_exc())
-					result['success'] = False
-					message = 'Failed to change IP'
-
-				# do we have a new reverse zone for this IP address?
-				rmodule = univention.admin.modules.get('dns/reverse_zone')
-				# ignore all netmask values != 255
-				c = request.options.get('netmask').split('.').count('255')
-				filter = '(subnet=%s)' % (string.join(request.options.get('ip').split('.')[0:c], '.'))
-				reverseobject = univention.admin.modules.lookup(rmodule, co, lo, scope='sub', superordinate=None, filter=filter)
-				if reverseobject:
-					server.open()
-					server['dnsEntryZoneReverse'].append([reverseobject[0].dn, request.options.get('ip')])
-				try:
-					server.modify()
-				except Exception:
-					MODULE.warn('Failed to change DNS reverse zone: %s' % traceback.format_exc())
-					result['success'] = False
-					message = 'Failed to change DNS reverse zone'
-
-				# Change ucs-sso entry
-				sso_fqdn = ucr.get('ucs/server/sso/fqdn')
-				if ucr.is_true('ucs/server/sso/autoregistraton', True):
-					fmodule = univention.admin.modules.get('dns/forward_zone')
-					hmodule = univention.admin.modules.get('dns/host_record')
-					forwardobjects = univention.admin.modules.lookup(fmodule, co, lo, scope='sub', superordinate=None, filter=None)
-					for forwardobject in forwardobjects:
-						zone = forwardobject.get('zone')
-						if not sso_fqdn.endswith(zone):
-							continue
-						sso_name = sso_fqdn[:-(len(zone) + 1)]
-						records = univention.admin.modules.lookup(hmodule, co, lo, scope='sub', superordinate=forwardobject, filter='(&(relativeDomainName=%s)(aRecord=%s))' % (sso_name, old_ip[0]))
-						for record in records:
-							record.open()
-							record['a'].remove(request.options.get('oldip'))
-							record['a'].append(request.options.get('ip'))
-							record.modify()
-
-		self.finished(request.id, result, message)
+		# Change ucs-sso entry
+		ucr.load()
+		sso_fqdn = ucr.get('ucs/server/sso/fqdn')
+		if ucr.is_true('ucs/server/sso/autoregistraton', True):
+			fmodule = univention.admin.modules.get('dns/forward_zone')
+			hmodule = univention.admin.modules.get('dns/host_record')
+			forwardobjects = univention.admin.modules.lookup(fmodule, None, lo, scope='sub', superordinate=None, filter=None)
+			for forwardobject in forwardobjects:
+				zone = forwardobject.get('zone')
+				if not sso_fqdn.endswith(zone):
+					continue
+				sso_name = sso_fqdn[:-(len(zone) + 1)]
+				records = univention.admin.modules.lookup(hmodule, None, lo, scope='sub', superordinate=forwardobject, filter=filter_format('(&(relativeDomainName=%s)(aRecord=%s))', (sso_name, current_ip[0])))
+				for record in records:
+					record.open()
+					record['a'].remove(oldip)
+					record['a'].append(ip)
+					record.modify()
