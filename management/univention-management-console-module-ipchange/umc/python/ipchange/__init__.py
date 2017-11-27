@@ -41,6 +41,7 @@ from ldap.filter import filter_format
 
 from univention.management.console.base import Base
 from univention.management.console.log import MODULE
+from univention.management.console.error import BadRequest
 from univention.management.console.config import ucr
 from univention.management.console.decorators import simple_response
 
@@ -63,7 +64,11 @@ class Instance(Base):
 			return
 
 		lo, position = univention.admin.uldap.getAdminConnection()
+		hmodule = univention.admin.modules.get('dns/host_record')
 		cmodule = univention.admin.modules.get('computers/%s' % (role,))
+
+		if univention.admin.modules.lookup(hmodule, None, lo, scope='sub', filter=filter_format('aRecord=%s', (ip,))):
+			raise BadRequest('The IP address is already in use by another system.')
 
 		# do we have a forward zone for this IP address?
 		if oldip and oldip != ip:
