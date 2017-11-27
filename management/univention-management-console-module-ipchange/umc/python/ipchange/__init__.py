@@ -31,6 +31,8 @@
 # /usr/share/common-licenses/AGPL-3; if not, see
 # <http://www.gnu.org/licenses/>.
 
+import ipaddr
+
 import univention.config_registry
 import univention.admin.modules
 import univention.admin.uldap
@@ -54,6 +56,11 @@ class Instance(Base):
 	def change(self, role, ip, netmask, oldip=None):
 		'''Return a dict with all necessary values for ipchange read from the current
 		status of the system.'''
+
+		network = ipaddr.IPv4Network('%s/%s' % (ip, netmask))
+		if network.IsLinkLocal():  # no DHCP adress received
+			MODULE.error('Ignore link local adress change.')
+			return
 
 		lo, position = univention.admin.uldap.getAdminConnection()
 		cmodule = univention.admin.modules.get('computers/%s' % (role,))
