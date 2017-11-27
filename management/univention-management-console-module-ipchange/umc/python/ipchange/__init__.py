@@ -89,14 +89,21 @@ class Instance(Base):
 
 		# do we have a new reverse zone for this IP address?
 		rmodule = univention.admin.modules.get('dns/reverse_zone')
-		# ignore all netmask values != 255
-		c = netmask.split('.').count('255')
-		filter = filter_format('(subnet=%s)', ('.'.join(ip.split('.')[0:c]),))
-		reverseobject = univention.admin.modules.lookup(rmodule, None, lo, scope='sub', superordinate=None, filter=filter)
-		if reverseobject:
-			server.open()
-			server['dnsEntryZoneReverse'].append([reverseobject[0].dn, ip])
-			server.modify()
+		parts = network.network.exploded.split('.')
+		while parts[-1] == '0':
+			parts.pop()
+
+		while parts:
+			subnet = '.'.join(parts)
+			parts.pop()
+			filter = filter_format('(subnet=%s)', (subnet,))
+			reverseobject = univention.admin.modules.lookup(rmodule, None, lo, scope='sub', superordinate=None, filter=filter)
+			if reverseobject:
+				server = cmodule.object(None, lo, position, self.user_dn)
+				server.open()
+				server['dnsEntryZoneReverse'].append([reverseobject[0].dn, ip])
+				server.modify()
+				break
 
 		# Change ucs-sso entry
 		ucr.load()
