@@ -1,3 +1,10 @@
+univention-updater (12.0.11-14) unstable; urgency=medium
+
+  * Bug #45060: URLs displayed in the log of the univention-updater UMC module are now
+    clickable
+
+ -- Jannik Ahlers <ahlers@univention.de>  Mon, 27 Nov 2017 11:33:57 +0100
+
 univention-updater (12.0.11-13) unstable; urgency=medium
 
   * Bug #45734: Adapt links and components for 4.2-3
