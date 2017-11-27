@@ -82,9 +82,9 @@ class Instance(Base):
 		# remove old DNS reverse entries with old IP
 		server = cmodule.object(None, lo, position, self.user_dn)
 		server.open()
-		current_ip = server['ip']
+		current_ips = server['ip']
 		for e in server['dnsEntryZoneReverse']:
-			if e[1] == current_ip:
+			if e[1] in current_ips:
 				server['dnsEntryZoneReverse'].remove(e)
 
 		# change IP
