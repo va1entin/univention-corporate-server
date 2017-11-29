@@ -32,6 +32,8 @@
 
 #DEBHELPER#
 
+a2ensite univention-portal.conf
+
 if [ "$1" = "configure" ]; then
 	systemctl reload apache2
 	systemctl restart univention-directory-listener
