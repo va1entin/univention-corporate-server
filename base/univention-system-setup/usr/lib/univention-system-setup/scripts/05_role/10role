@@ -79,7 +79,8 @@ class RoleScript(AptScript):
 
 		if current_server_role_package:
 			self.uninstall(current_server_role_package)
-		self.install(wanted_server_role_package)
+		if not self.install(wanted_server_role_package):
+			return False
 
 		self.finish_task()
 

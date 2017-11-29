@@ -417,11 +417,11 @@ class AptScript(SetupScript):
 
 	def install(self, *pkg_names):
 		with self.noninteractive():
-			self.package_manager.install(*pkg_names)
+			return self.package_manager.install(*pkg_names)
 
 	def uninstall(self, *pkg_names):
 		with self.noninteractive():
-			self.package_manager.uninstall(*pkg_names)
+			return self.package_manager.uninstall(*pkg_names)
 
 	def get_package_for_role(self, role_name):
 		'''Searches for the meta-package that belongs

@@ -108,7 +108,7 @@ ucr commit /etc/apt/sources.list.d/*
 apt-get update
 
 # Install the server package
-/usr/lib/univention-system-setup/scripts/05_role/10role
+/usr/lib/univention-system-setup/scripts/05_role/10role || exit $?
 
 echo "Starting re-configuration of basic settings"
 
