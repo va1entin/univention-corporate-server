@@ -293,7 +293,7 @@ define([
 				data.sort(function(a,b) {
 					var aValue = a[sorter.property];
 					var bValue = b[sorter.property];
-					return compare(aValue, bValue) * sorter.descending;
+					return compare(aValue, bValue) * (sorter.descending ? -1 : 1);
 				});
 				return data;
 			};
