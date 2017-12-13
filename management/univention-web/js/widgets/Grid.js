@@ -291,10 +291,10 @@ define([
 					return -1;
 				}
 				if (a === null || typeof(a) === 'undefined') {
-					return 1;
+					return -1;
 				}
 				if (b === null || typeof(b) === 'undefined') {
-					return -1;
+					return 1;
 				}
 				if (a > b) {
 					return 1;
