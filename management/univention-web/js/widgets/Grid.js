@@ -283,14 +283,24 @@ define([
 				}
 				if (a === b) {
 					return 0;
-				} else if (a > b) {
-					return 1;
-				} else if (a === null && typeof(b) === 'undefined') {
-					return 1;
-				} else if (b === null || typeof(b) === 'undefined') {
+				}
+				if (a === null && typeof(b) === 'undefined') {
 					return 1;
 				}
-				return -1;
+				if (typeof(a) === 'undefined' && b === null) {
+					return -1;
+				}
+				if (a === null || typeof(a) === 'undefined') {
+					return 1;
+				}
+				if (b === null || typeof(b) === 'undefined') {
+					return -1;
+				}
+				if (a > b) {
+					return 1;
+				} else {
+					return -1;
+				}
 			};
 			return function(data) {
 				data = data.slice();
