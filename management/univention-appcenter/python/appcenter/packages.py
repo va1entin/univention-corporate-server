@@ -33,10 +33,14 @@
 #
 
 from logging import Handler
+from contextlib import contextmanager
 
-from univention.lib.package_manager import PackageManager
+from univention.lib.package_manager import PackageManager, LockError  # LockError is actually imported from other files!
 
 from univention.appcenter.log import get_base_logger
+
+
+package_logger = get_base_logger().getChild('packages')
 
 
 class _PackageManagerLogHandler(Handler):
@@ -89,9 +93,49 @@ def packages_are_installed(pkgs, strict=True):
 		return True
 
 
+@contextmanager
+def package_lock(reset):
+	try:
+		with get_package_manager().locked(reset_status=reset, set_finished=reset):
+			yield
+	except LockError:
+		package_logger.warn('Could not aquire lock!')
+		raise
+
+
+def install_packages_dry_run(pkgs, with_dist_upgrade):
+	package_manager = get_package_manager()
+	to_install = package_manager.get_packages(pkgs)
+	if with_dist_upgrade:
+		package_manager.cache.upgrade(dist_upgrade=True)
+	package_changes = get_package_manager().mark(to_install, [], dry_run=True)
+	return dict(zip(['install', 'remove', 'broken'], package_changes))
+
+
 def install_packages(pkgs):
-	with get_package_manager().locked(reset_status=True, set_finished=True):
-		return get_package_manager().commit(install=pkgs)
+	with package_lock(reset=False):
+		return get_package_manager().install(*pkgs)
+
+
+def remove_packages_dry_run(pkgs, with_auto_remove):
+	package_manager = get_package_manager()
+	package_manager.reopen_cache()
+	to_uninstall = package_manager.get_packages(pkgs)
+	for package in to_uninstall:
+		package.mark_delete()
+	packages = [pkg.name for pkg in package_manager.packages() if pkg.marked_delete or (with_auto_remove and pkg.is_auto_removable)]
+	package_manager.reopen_cache()
+	return dict(zip(['install', 'remove', 'broken'], [[], packages, []]))
+
+
+def remove_packages(pkgs):
+	with package_lock(reset=False):
+		return get_package_manager().uninstall(*pkgs)
+
+
+def dist_upgrade(pkgs):
+	with package_lock(reset=False):
+		return get_package_manager().dist_upgrade()
 
 
 def update_packages():

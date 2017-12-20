@@ -1,3 +1,9 @@
+univention-appcenter (7.0.1-2) unstable; urgency=medium
+
+  * UMC App Center should install non docker apps with new library
+
+ -- Dirk Wiesenthal <wiesenthal@univention.de>  Wed, 20 Dec 2017 13:58:42 +0100
+
 univention-appcenter (7.0.1-1) unstable; urgency=medium
 
   * Use service instead of invoke-rc.d since systemd policy layer
