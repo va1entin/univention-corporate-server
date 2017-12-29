@@ -70,6 +70,7 @@ finally:
 	if orig_path:
 		sys.path = orig_path
 
+
 # Ensure unviention debug is initialized
 def initialize_debug():
 	# Use a little hack to determine if univention.debug has been initialized
@@ -86,6 +87,7 @@ def initialize_debug():
 		ud.set_level(ud.MODULE, ud.PROCESS)
 	else:
 		ud.set_level(ud.MODULE, oldLevel)
+
 
 class failedToSetService(Exception):
 
@@ -1013,7 +1015,7 @@ def prepare_dns_reverse_settings(ad_domain_info, ucr=None):
 	except (socket.herror, socket.gaierror) as exc:
 		ud.debug(ud.MODULE, ud.INFO, "Resolving %s failed: %s" % (ad_domain_info['DC IP'], exc.args[1]))
 
-	## Set a hosts/static anyway, to be safe from DNS issues (Bug #38285)
+	# Set a hosts/static anyway, to be safe from DNS issues (Bug #38285)
 	previous_ucr_set = []
 	previous_ucr_unset = []
 
@@ -1034,6 +1036,7 @@ def prepare_dns_reverse_settings(ad_domain_info, ucr=None):
 	univention.config_registry.handler_set(ucr_set)
 
 	return (previous_ucr_set, previous_ucr_unset)
+
 
 def prepare_kerberos_ucr_settings(realm=None, ucr=None):
 	ud.debug(ud.MODULE, ud.PROCESS, "Prepare Kerberos UCR settings")
@@ -1350,7 +1353,8 @@ def add_domaincontroller_srv_record_in_ad(ad_ip, username, password, ucr=None):
 			fd.write('send\n')
 			fd.write('quit\n')
 			fd.flush()
-			p1 = subprocess.Popen(['kinit', '--password-file=%s' % (fd2.name,), username, 'nsupdate', '-v', '-g', fd.name], close_fds=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+			cmd = ['kinit', '--password-file=%s' % (fd2.name,), username, 'nsupdate', '-v', '-g', fd.name]
+			p1 = subprocess.Popen(cmd, close_fds=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
 			stdout, stderr = p1.communicate()
 			ud.debug(ud.MODULE, ud.PROCESS, "%s" % stdout)
 			if p1.returncode:
@@ -1360,8 +1364,7 @@ def add_domaincontroller_srv_record_in_ad(ad_ip, username, password, ucr=None):
 
 	fd = tempfile.NamedTemporaryFile(delete=False)
 	fd.write('server %s\n' % ad_ip)
-	fd.write('update add %s. 10800 SRV 0 0 0 %s\n' %
-		(srv_record, fqdn_with_trailing_dot))
+	fd.write('update add %s. 10800 SRV 0 0 0 %s\n' % (srv_record, fqdn_with_trailing_dot))
 	fd.write('send\n')
 	fd.write('quit\n')
 	fd.close()
