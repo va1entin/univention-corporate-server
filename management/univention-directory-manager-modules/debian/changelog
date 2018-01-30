@@ -1,3 +1,9 @@
+univention-directory-manager-modules (13.1.12-1) unstable; urgency=medium
+
+  * pseudo
+
+ -- Florian Best <best@univention.de>  Tue, 30 Jan 2018 21:03:38 +0100
+
 univention-directory-manager-modules (13.0.12-1) unstable; urgency=medium
 
   * Bug #39817: fix fuzzy
