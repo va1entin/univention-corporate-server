@@ -93,9 +93,6 @@ Variables: timeserver3
 Variables: server/role
 
 Type: file
-File: boot/boot.msg
-
-Type: file
 File: etc/modules
 Variables: kernel/modules
 

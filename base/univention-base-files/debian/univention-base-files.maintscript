@@ -1,0 +1,1 @@
+rm_conffile /etc/univention/templates/files/boot/boot.msg 7.0.0-7~
