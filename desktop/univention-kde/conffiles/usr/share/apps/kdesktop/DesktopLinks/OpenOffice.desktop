@@ -1,10 +1,10 @@
 [Desktop Entry]
 Comment[de]=
 Encoding=UTF-8
-Exec=bash -c "ooffice >>~/.KDE-stderr 2>&1"
-Icon=ooo_gulls
+Exec=sh -c "exec libreoffice >>~/.KDE-stderr 2>&1"
+Icon=libreoffice-startcenter
 MimeType=
-Name[de]=OpenOffice
+Name[de]=LibreOffice
 Path=
 ServiceTypes=
 SwallowExec=
