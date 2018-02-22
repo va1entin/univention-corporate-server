@@ -308,8 +308,8 @@ define([
 					}, this);
 				}));
 
-				if (this.operation === 'add') {  // don't show when copying objects
-					// var objecttype = vals.$labelObjectType$;
+				// show type and position of udm object when editing a single object
+				if (this.operation === 'edit') {
 					var path = tools.ldapDn2Path( this.ldapName, this.ldapBase);
 					var objecttype = _('Type: <i>%(type)s</i>', { type: vals.$labelObjectType$ });
 					var position = _('Position: <i>%(path)s</i>', { path: path });
